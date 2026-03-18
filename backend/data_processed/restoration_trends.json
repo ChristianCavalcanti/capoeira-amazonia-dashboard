@@ -1,0 +1,34 @@
+[
+  {
+    "year": 2020,
+    "region": "Par\u00e1",
+    "area_restored": 1200,
+    "carbon": 35,
+    "carbon_per_hectare": 0.03,
+    "restoration_growth_rate_pct": null
+  },
+  {
+    "year": 2021,
+    "region": "Acre",
+    "area_restored": 800,
+    "carbon": 20,
+    "carbon_per_hectare": 0.02,
+    "restoration_growth_rate_pct": null
+  },
+  {
+    "year": 2022,
+    "region": "Rond\u00f4nia",
+    "area_restored": 950,
+    "carbon": 28,
+    "carbon_per_hectare": 0.03,
+    "restoration_growth_rate_pct": null
+  },
+  {
+    "year": 2023,
+    "region": "Amazonas",
+    "area_restored": 1400,
+    "carbon": 42,
+    "carbon_per_hectare": 0.03,
+    "restoration_growth_rate_pct": null
+  }
+]

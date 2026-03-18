@@ -1,0 +1,130 @@
+<div class="dashboard-page">
+  <header class="page-header">
+    <h1>Restauração da Floresta Amazônica</h1>
+    <p class="subtitle">Área restaurada e sequestro de carbono por região e ano</p>
+  </header>
+
+  @if (loading()) {
+    <div class="loading">Carregando dados…</div>
+  } @else if (error()) {
+    <div class="error">
+      <p>{{ error() }}</p>
+      <p class="hint">Verifique se o backend FastAPI está em execução em <code>http://localhost:8000</code>.</p>
+    </div>
+  } @else {
+    <div class="metrics-row">
+      <app-metric-card
+        title="Área total restaurada"
+        [value]="totalRestored() + ' ha'"
+        subtitle="Nas regiões monitoradas"
+      />
+      <app-metric-card
+        title="Carbono capturado"
+        [value]="totalCarbon() + ' tCO₂e'"
+        subtitle="Sequestro de carbono"
+      />
+      <app-metric-card
+        title="Regiões monitoradas"
+        [value]="regionCount()"
+        subtitle="Regiões da Amazônia no conjunto de dados"
+      />
+      <app-metric-card
+        title="Anos de dados"
+        [value]="yearCount()"
+        subtitle="Período coberto"
+      />
+    </div>
+
+    <section class="filter-section">
+      <h2>Filtros</h2>
+      <div class="filter-panel">
+        <label class="filter-label">
+          <span>Ano</span>
+          <select
+            class="filter-select"
+            (change)="onYearChange($event)"
+          >
+            <option value="" [selected]="filterService.yearFilter() === null">Todos os anos</option>
+            @for (y of uniqueYears(); track y) {
+              <option [value]="y" [selected]="filterService.yearFilter() === y">{{ y }}</option>
+            }
+          </select>
+        </label>
+        <label class="filter-label">
+          <span>Região</span>
+          <select
+            class="filter-select"
+            (change)="onRegionChange($event)"
+          >
+            <option value="" [selected]="filterService.regionFilter() === null">Todas as regiões</option>
+            @for (r of uniqueRegions(); track r) {
+              <option [value]="r" [selected]="filterService.regionFilter() === r">{{ r }}</option>
+            }
+          </select>
+        </label>
+        <button type="button" class="btn-clear" (click)="clearFilters()">
+          Limpar filtros
+        </button>
+      </div>
+    </section>
+
+    <section class="charts-section">
+      <h2>Gráficos</h2>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas
+              baseChart
+              [data]="areaChartData()"
+              [options]="areaChartOptions"
+              type="bar"
+            ></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas
+              baseChart
+              [data]="carbonChartData()"
+              [options]="carbonChartOptions"
+              type="line"
+            ></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="map-section">
+      <h2>Mapa das regiões</h2>
+      <div class="map-card">
+        <app-amazon-map [records]="filteredData()" />
+      </div>
+    </section>
+
+    <section class="table-section">
+      <h2>Tabela de dados</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Região</th>
+              <th>Ano</th>
+              <th>Área restaurada (ha)</th>
+              <th>Carbono (tCO₂e)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of filteredData(); track row.region + row.year) {
+              <tr>
+                <td>{{ row.region }}</td>
+                <td>{{ row.year }}</td>
+                <td>{{ row.area_restored }}</td>
+                <td>{{ row.carbon }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

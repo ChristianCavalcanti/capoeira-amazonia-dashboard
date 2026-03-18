@@ -1,0 +1,25 @@
+.chart-card {
+  background: var(--bg-card, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(45, 106, 79, 0.06);
+  border: 1px solid var(--border, #e0eae4);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.chart-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text, #1b4332);
+  margin: 0;
+  padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.chart-card-body {
+  padding: 0 1.5rem 1.75rem;
+}
+
+.chart-card-body:has(canvas) {
+  padding-bottom: 1.25rem;
+  min-height: 260px;
+}

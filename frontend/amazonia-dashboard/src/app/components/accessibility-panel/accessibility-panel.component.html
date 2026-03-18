@@ -1,0 +1,124 @@
+<div class="accessibility-panel" role="dialog" aria-labelledby="a11y-panel-title" aria-modal="true">
+  <div class="accessibility-panel-header">
+    <h2 id="a11y-panel-title" class="accessibility-panel-title">{{ labels().title }}</h2>
+    <button
+      type="button"
+      class="accessibility-panel-close"
+      [attr.aria-label]="labels().close"
+      (click)="onClose()"
+    >
+      ×
+    </button>
+  </div>
+
+  <section class="accessibility-panel-section" aria-labelledby="a11y-text-size">
+    <h3 id="a11y-text-size" class="accessibility-panel-section-title">{{ labels().textSize }}</h3>
+    <div class="accessibility-panel-row">
+      <button
+        type="button"
+        class="accessibility-panel-btn"
+        [disabled]="!a11y.canDecreaseFont()"
+        [attr.aria-label]="labels().decreaseFont"
+        (click)="a11y.decreaseFontSize()"
+      >
+        −
+      </button>
+      <span class="accessibility-panel-value" aria-live="polite">{{ a11y.fontScalePercent() }}%</span>
+      <button
+        type="button"
+        class="accessibility-panel-btn"
+        [disabled]="!a11y.canIncreaseFont()"
+        [attr.aria-label]="labels().increaseFont"
+        (click)="a11y.increaseFontSize()"
+      >
+        +
+      </button>
+    </div>
+  </section>
+
+  <section class="accessibility-panel-section" aria-labelledby="a11y-visual">
+    <h3 id="a11y-visual" class="accessibility-panel-section-title">{{ labels().visualModes }}</h3>
+    <div class="accessibility-panel-toggles">
+      <button
+        type="button"
+        class="accessibility-panel-toggle"
+        [class.active]="a11y.isHighContrast()"
+        [attr.aria-pressed]="a11y.isHighContrast()"
+        [attr.aria-label]="labels().highContrast"
+        (click)="a11y.setHighContrast(!a11y.isHighContrast())"
+      >
+        {{ labels().highContrast }}
+      </button>
+      <button
+        type="button"
+        class="accessibility-panel-toggle"
+        [class.active]="a11y.isGrayscale()"
+        [attr.aria-pressed]="a11y.isGrayscale()"
+        [attr.aria-label]="labels().grayscale"
+        (click)="a11y.setGrayscale(!a11y.isGrayscale())"
+      >
+        {{ labels().grayscale }}
+      </button>
+      <button
+        type="button"
+        class="accessibility-panel-toggle"
+        [class.active]="a11y.isDyslexiaFont()"
+        [attr.aria-pressed]="a11y.isDyslexiaFont()"
+        [attr.aria-label]="labels().dyslexiaFont"
+        (click)="a11y.setDyslexiaFont(!a11y.isDyslexiaFont())"
+      >
+        {{ labels().dyslexiaFont }}
+      </button>
+      <button
+        type="button"
+        class="accessibility-panel-toggle"
+        [class.active]="a11y.isDarkMode()"
+        [attr.aria-pressed]="a11y.isDarkMode()"
+        [attr.aria-label]="labels().darkMode"
+        (click)="a11y.setDarkMode(!a11y.isDarkMode())"
+      >
+        {{ labels().darkMode }}
+      </button>
+    </div>
+  </section>
+
+  <section class="accessibility-panel-section" aria-labelledby="a11y-readability">
+    <h3 id="a11y-readability" class="accessibility-panel-section-title">{{ labels().readability }}</h3>
+    <div class="accessibility-panel-toggles">
+      <button
+        type="button"
+        class="accessibility-panel-toggle"
+        [class.active]="a11y.isLineSpacing()"
+        [attr.aria-pressed]="a11y.isLineSpacing()"
+        [attr.aria-label]="labels().lineSpacing"
+        (click)="a11y.setLineSpacing(!a11y.isLineSpacing())"
+      >
+        {{ labels().lineSpacing }}
+      </button>
+      <button
+        type="button"
+        class="accessibility-panel-toggle"
+        [class.active]="a11y.isLetterSpacing()"
+        [attr.aria-pressed]="a11y.isLetterSpacing()"
+        [attr.aria-label]="labels().letterSpacing"
+        (click)="a11y.setLetterSpacing(!a11y.isLetterSpacing())"
+      >
+        {{ labels().letterSpacing }}
+      </button>
+    </div>
+  </section>
+
+  <section class="accessibility-panel-section" aria-labelledby="a11y-motion">
+    <h3 id="a11y-motion" class="accessibility-panel-section-title">{{ labels().motion }}</h3>
+    <button
+      type="button"
+      class="accessibility-panel-toggle"
+      [class.active]="a11y.isReducedMotion()"
+      [attr.aria-pressed]="a11y.isReducedMotion()"
+      [attr.aria-label]="labels().reduceMotion"
+      (click)="a11y.setReducedMotion(!a11y.isReducedMotion())"
+    >
+      {{ labels().reduceMotion }}
+    </button>
+  </section>
+</div>

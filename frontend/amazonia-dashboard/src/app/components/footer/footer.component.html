@@ -1,0 +1,40 @@
+<footer class="footer" role="contentinfo">
+  <div class="footer-inner">
+    <section class="footer-brand">
+      <img src="/logo.jpg" alt="Logo CAPOEIRA" class="footer-logo-img" width="56" height="56" />
+      <h2 class="footer-title">CAPOEIRA</h2>
+      <p class="footer-subtitle">{{ footerText().institutional }}</p>
+    </section>
+
+    <section class="footer-contact">
+      <h3>{{ footerText().contact }}</h3>
+      <p>contato.centrocapoeira&#64;gmail.com</p>
+      <p>Belém, PA — Embrapa Amazônia Oriental</p>
+      <p>&#64;centrocapoeira</p>
+      <p>Centro CAPOEIRA</p>
+      <a href="https://www.linkedin.com/company/centro-capoeira/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="footer-linkedin" aria-label="Visit CAPOEIRA Center LinkedIn page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        {{ footerText().linkedin }}
+      </a>
+    </section>
+
+    <section class="footer-funding">
+      <h3>{{ footerText().funding }}</h3>
+      <ul>
+        <li><strong>CNPq</strong><br>{{ footerText().cnpq }}</li>
+        <li><strong>MCTI</strong><br>{{ footerText().mcti }}</li>
+        <li><strong>FNDCT</strong><br>{{ footerText().fndct }}</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="footer-logos">
+    <span class="footer-logo-label">Embrapa</span>
+    <span class="footer-logo-label">CNPq</span>
+    <span class="footer-logo-label">MCTI</span>
+  </div>
+
+  <p class="footer-copy">{{ footerText().copyright }}</p>
+</footer>

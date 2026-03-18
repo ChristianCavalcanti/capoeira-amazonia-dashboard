@@ -1,0 +1,22 @@
+[
+  {
+    "id": "carbon_density",
+    "text_pt": "Amazonas apresenta o maior sequestro de carbono por hectare em 2023 (0.0 tCO₂e/ha).",
+    "text_en": "Amazonas shows the highest carbon sequestration per hectare in 2023 (0.0 tCO₂e/ha)."
+  },
+  {
+    "id": "area_trend",
+    "text_pt": "A área em restauração aumentou de forma contínua entre 2020 e 2023.",
+    "text_en": "Restoration area increased steadily between 2020 and 2023."
+  },
+  {
+    "id": "method_contribution",
+    "text_pt": "Regeneração natural representa a maior contribuição (51%).",
+    "text_en": "Regeneração natural represents the largest contribution (51%)."
+  },
+  {
+    "id": "leading_region",
+    "text_pt": "Em 2023, Amazonas registrou a maior área restaurada (1400 ha).",
+    "text_en": "In 2023, Amazonas recorded the largest restored area (1400 ha)."
+  }
+]

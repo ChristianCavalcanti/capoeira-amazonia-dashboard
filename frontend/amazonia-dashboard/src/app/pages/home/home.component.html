@@ -1,0 +1,424 @@
+<div class="page">
+  <!-- Hero institucional -->
+  <section id="inicio" class="section section-hero" appScrollReveal>
+    <div class="hero-logo">
+      <app-logo-capoeira [size]="64" variant="default" />
+    </div>
+    <p class="hero-tagline">{{ uiText().heroTagline }}</p>
+    <h1 class="hero-title">{{ uiText().heroTitle }}</h1>
+    <p class="hero-subtitle">
+      {{ uiText().heroSubtitle }}
+    </p>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="scrollToSection('panorama')"
+    >
+      {{ uiText().exploreButton }}
+    </button>
+  </section>
+
+  <!-- Panorama da Restauração -->
+  <section id="panorama" class="section section-panorama">
+    <h2 class="section-title">{{ uiText().panoramaTitle }}</h2>
+    <p class="section-desc">
+      {{ uiText().panoramaSubtitle }}
+    </p>
+
+    @if (loading()) {
+      <div class="state-message loading">{{ uiText().loadingMessage }}</div>
+    } @else if (error()) {
+      <div class="error-box">
+        <p>{{ error() }}</p>
+        <p class="hint">{{ uiText().errorBackendHint }} <code>http://localhost:8000</code>.</p>
+      </div>
+    } @else {
+      <div class="panorama-filters-wrapper" appScrollReveal>
+        <p class="panorama-filters-intro">{{ uiText().panoramaFiltersIntro }}</p>
+        <p class="panorama-filters-map-hint">{{ uiText().panoramaFiltersMapHint }}</p>
+        <div class="filter-bar">
+          <label class="filter-label">
+            <span>{{ uiText().filterYear }}</span>
+            <select class="filter-select" (change)="onYearChange($event)">
+              <option value="" [selected]="filterService.yearFilter() === null">{{ uiText().filterAll }}</option>
+              @for (y of uniqueYears(); track y) {
+                <option [value]="y" [selected]="filterService.yearFilter() === y">{{ y }}</option>
+              }
+            </select>
+          </label>
+          <label class="filter-label">
+            <span>{{ uiText().filterRegion }}</span>
+            <select class="filter-select" (change)="onRegionChange($event)">
+              <option value="" [selected]="filterService.regionFilter() === null">{{ uiText().filterAll }}</option>
+              @for (r of uniqueRegions(); track r) {
+                <option [value]="r" [selected]="filterService.regionFilter() === r">{{ r }}</option>
+              }
+            </select>
+          </label>
+          <label class="filter-label">
+            <span>{{ uiText().filterRestorationType }}</span>
+            <select class="filter-select" (change)="onRestorationTypeChange($event)">
+              <option value="" [selected]="filterService.restorationTypeFilter() === null">{{ uiText().filterAll }}</option>
+              @for (t of uniqueRestorationTypes(); track t) {
+                <option [value]="t" [selected]="filterService.restorationTypeFilter() === t">{{ t }}</option>
+              }
+            </select>
+          </label>
+          <button type="button" class="btn btn-ghost" (click)="clearFilters()">{{ uiText().filterClear }}</button>
+        </div>
+      </div>
+
+      <div class="destaques-grid panorama-grid" appScrollReveal>
+        <app-highlight-card
+          [title]="uiText().panoramaAreaTitle"
+          [value]="areaTotalMonitorada() + ' ha'"
+          [subtitle]="uiText().panoramaAreaSubtitle"
+          icon="area"
+          [tooltip]="'Área total (hectares) sob monitoramento de restauração nas regiões selecionadas.'"
+          [variation]="panoramaVariationArea()"
+        />
+        <app-highlight-card
+          [title]="uiText().panoramaCarbonTitle"
+          [value]="estoqueMedioCarbono() + ' tCO₂e'"
+          [subtitle]="uiText().panoramaCarbonSubtitle"
+          icon="carbon"
+          [tooltip]="'Estoque médio de carbono (tCO₂e) nos sítios monitorados. Tendência: primeiro vs último ano.'"
+          [variation]="panoramaVariationCarbon()"
+        />
+        <app-highlight-card
+          [title]="uiText().panoramaBiodiversityTitle"
+          [value]="indiceBiodiversidade().toFixed(2)"
+          [subtitle]="uiText().panoramaBiodiversitySubtitle"
+          icon="regions"
+          [tooltip]="'Índice estimado (0–1) com base na relação carbono/hectare nos dados disponíveis.'"
+        />
+        <app-highlight-card
+          [title]="uiText().panoramaRegenerationTitle"
+          [value]="taxaMediaRegeneracao() + '%'"
+          [subtitle]="uiText().panoramaRegenerationSubtitle"
+          icon="trend"
+          [tooltip]="'Taxa média de regeneração (%) estimada a partir dos indicadores de carbono e área.'"
+        />
+        <app-highlight-card
+          [title]="uiText().panoramaSitesTitle"
+          [value]="numeroSitios()"
+          [subtitle]="uiText().panoramaSitesSubtitle"
+          icon="sites"
+          [tooltip]="'Número de sítios (regiões) com dados de restauração no período e filtros selecionados.'"
+        />
+        <app-highlight-card
+          [title]="uiText().panoramaInstitutionsTitle"
+          [value]="numeroInstituicoes()"
+          [subtitle]="uiText().panoramaInstitutionsSubtitle"
+          icon="institutions"
+          [tooltip]="'Número de instituições/parceiros associados aos sítios do dataset (por região).'"
+        />
+      </div>
+    }
+  </section>
+
+  <!-- Mapa Interativo da Amazônia -->
+  <section id="mapa" class="section section-mapa">
+    <h2 class="section-title">{{ uiText().mapTitle }}</h2>
+    <p class="section-desc">
+      {{ uiText().mapSubtitle }}
+    </p>
+    @if (!loading() && !error()) {
+      <div class="map-legend-bar" appScrollReveal>
+        <div class="map-legend-summary">
+          <span class="map-legend-label">{{ uiText().mapSitesDisplayed }}:</span>
+          <strong>{{ mapRecords().length }}</strong> {{ uiText().mapRecordsInRegions }}
+          <strong>{{ mapRegionCounts().length }}</strong> {{ uiText().mapRegions }}
+        </div>
+        <ul class="map-legend-list" aria-label="Regiões no mapa">
+          @for (item of mapRegionCounts(); track item.region) {
+            <li class="map-legend-list-item">
+              <span class="map-legend-dot" aria-hidden="true"></span>
+              <span>{{ item.region }}</span>
+              <span class="map-legend-count">({{ item.count }})</span>
+            </li>
+          }
+        </ul>
+        <p class="map-legend-hint">{{ uiText().mapClickMarkerHint }}</p>
+      </div>
+      <div class="map-section-card map-with-panel" appScrollReveal>
+        <app-amazon-map
+          [records]="mapMarkerRecords()"
+          [selectedRegion]="selectedRegionForPanel()"
+          (regionSelected)="onRegionSelectedFromMap($event)"
+        />
+        @if (selectedRegionForPanel()) {
+          <div class="map-side-panel" role="dialog" aria-label="Detalhes da região">
+            <div class="map-panel-header">
+              <h3 class="map-panel-title">{{ selectedRegionForPanel() }}</h3>
+              <button type="button" class="map-panel-close" [attr.aria-label]="uiText().mapPanelClose" (click)="closeMapPanel()">
+                ×
+              </button>
+            </div>
+            <div class="map-panel-body">
+              <p class="map-panel-stat"><strong>{{ uiText().mapPanelRestored }}:</strong> {{ totalRestored() }} ha</p>
+              <p class="map-panel-stat"><strong>{{ uiText().mapPanelCarbon }}:</strong> {{ totalCarbon() }} tCO₂e</p>
+              <p class="map-panel-stat"><strong>{{ uiText().mapPanelRecords }}:</strong> {{ filteredData().length }}</p>
+              <button type="button" class="btn btn-primary btn-sm" (click)="scrollToSection('laboratorio'); closeMapPanel()">
+                {{ uiText().mapSeeCharts }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Laboratório de Dados -->
+  <section id="laboratorio" class="section section-visualizations">
+    <h2 class="section-title">{{ uiText().laboratorioTitle }}</h2>
+    <p class="section-desc">
+      {{ uiText().laboratorioSubtitle }}
+    </p>
+    @if (!loading() && !error()) {
+      <p class="lab-charts-hint" appScrollReveal>{{ uiText().labChartsHint }}</p>
+      <div class="charts-row charts-row-2" appScrollReveal>
+        <app-chart-card>
+          <div class="chart-container">
+            <canvas
+              baseChart
+              [data]="areaChartData()"
+              [options]="areaChartOptions()"
+              type="bar"
+              (chartClick)="onChartClick($event, 'area')"
+            ></canvas>
+          </div>
+        </app-chart-card>
+        <app-chart-card>
+          <div class="chart-container">
+            <canvas
+              baseChart
+              [data]="carbonChartData()"
+              [options]="carbonChartOptions()"
+              type="line"
+              (chartClick)="onChartClick($event, 'carbon')"
+            ></canvas>
+          </div>
+        </app-chart-card>
+      </div>
+      <div class="charts-row charts-row-3" appScrollReveal>
+        <app-chart-card>
+          <div class="chart-container">
+            <canvas
+              baseChart
+              [data]="carbonByRegionData()"
+              [options]="carbonByRegionOptions()"
+              type="bar"
+              (chartClick)="onChartClick($event, 'carbonByRegion')"
+            ></canvas>
+          </div>
+        </app-chart-card>
+        <app-chart-card>
+          <div class="chart-container">
+            <canvas
+              baseChart
+              [data]="restorationTypeChartData()"
+              [options]="restorationTypeChartOptions()"
+              type="bar"
+              (chartClick)="onChartClick($event, 'restorationType')"
+            ></canvas>
+          </div>
+        </app-chart-card>
+      </div>
+
+      <app-data-table [data]="filteredData()" [loading]="loading()" />
+    }
+  </section>
+
+  <!-- Exploração de Bases Científicas -->
+  <section id="bases-cientificas" class="section section-dados">
+    <h2 class="section-title">{{ uiText().basesTitle }}</h2>
+    <p class="section-desc">
+      {{ uiText().basesSubtitle }}
+    </p>
+
+    <div class="catalog-filters" appScrollReveal>
+      <input
+        type="search"
+        class="catalog-search"
+        [placeholder]="uiText().catalogSearchPlaceholder"
+        [value]="catalogSearch()"
+        (input)="onCatalogSearch($event)"
+      />
+      <label class="filter-label">
+        <span>{{ uiText().filterYear }}</span>
+        <select class="filter-select" (change)="onCatalogYearChange($event)">
+          <option value="">{{ uiText().filterAll }}</option>
+          @for (y of catalogUniqueYears(); track y) {
+            <option [value]="y" [selected]="catalogYearFilter() === y">{{ y }}</option>
+          }
+        </select>
+      </label>
+      <label class="filter-label">
+        <span>{{ uiText().catalogType }}</span>
+        <select class="filter-select" (change)="onCatalogTypeChange($event)">
+          <option value="">{{ uiText().filterAll }}</option>
+          @for (t of catalogUniqueTypes(); track t) {
+            <option [value]="t" [selected]="catalogTypeFilter() === t">{{ catalogTypeLabel(t) }}</option>
+          }
+        </select>
+      </label>
+      <label class="filter-label">
+        <span>{{ uiText().catalogStatus }}</span>
+        <select class="filter-select" (change)="onCatalogStatusChange($event)">
+          <option value="">{{ uiText().filterAll }}</option>
+          @for (s of catalogUniqueStatuses(); track s) {
+            <option [value]="s" [selected]="catalogStatusFilter() === s">{{ catalogStatusLabel(s) }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <div class="catalog-summary" appScrollReveal>
+      <span class="catalog-summary-count">{{ filteredCatalog().length }} {{ uiText().catalogCountFound }}</span>
+      <div class="catalog-status-pills">
+        @for (status of catalogStatusOrder; track status) {
+          @if (catalogStatusCounts()[status] > 0) {
+            <span class="catalog-pill" [class.catalog-pill-published]="status === 'Publicado'" [class.catalog-pill-review]="status === 'Em revisão'" [class.catalog-pill-processing]="status === 'Processando'">{{ catalogStatusCounts()[status] }} {{ catalogStatusLabel(status) }}</span>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="catalog-list" appScrollReveal>
+      @for (item of filteredCatalog(); track item.id) {
+        <div class="catalog-card">
+          <h3 class="catalog-card-title">{{ item.name }}</h3>
+          <p class="catalog-card-meta">{{ item.institution }} · {{ item.year }} · {{ item.typeDisplay }} · {{ item.statusDisplay }}</p>
+          <p class="catalog-card-desc">{{ item.description }}</p>
+          <button type="button" class="btn btn-primary btn-sm" (click)="exploreCatalogData()">
+            {{ uiText().catalogExplore }}
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Insights e Análises -->
+  <section id="insights" class="section section-insights">
+    <h2 class="section-title">{{ uiText().insightsTitle }}</h2>
+    <p class="section-desc">
+      {{ uiText().insightsSubtitle }}
+    </p>
+    @if (scientificInsights().length > 0) {
+      <div class="insights-grid insights-grid-dynamic" appScrollReveal>
+        @for (insight of scientificInsights(); track insight.id) {
+          <div class="insight-card">
+            <p class="insight-lead">{{ insight.text }}</p>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="insights-grid insights-grid-3" appScrollReveal>
+        <div class="insight-card">
+          <h3>{{ uiText().insight1Title }}</h3>
+          <p class="insight-lead">{{ uiText().insight1Lead }}</p>
+          <ul>
+            <li>{{ uiText().insight1_1 }}</li>
+            <li>{{ uiText().insight1_2 }}</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h3>{{ uiText().insight2Title }}</h3>
+          <p class="insight-lead">{{ uiText().insight2Lead }}</p>
+          <ul>
+            <li>{{ uiText().insight2_1 }}</li>
+            <li>{{ uiText().insight2_2 }}</li>
+            <li>{{ uiText().insight2_3 }}</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h3>{{ uiText().insight3Title }}</h3>
+          <p class="insight-lead">{{ uiText().insight3Lead }}</p>
+          <ul>
+            <li>{{ uiText().insight3_1 }}</li>
+            <li>{{ uiText().insight3_2 }}</li>
+          </ul>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- Centro CAPOEIRA -->
+  <section id="centro-capoeira" class="section section-centro">
+    <div class="centro-logo">
+      <app-logo-capoeira [size]="48" variant="default" />
+    </div>
+    <h2 class="section-title">{{ uiText().centroTitle }}</h2>
+    <p class="section-desc">{{ uiText().centroSubtitle }}</p>
+    <div class="centro-content" appScrollReveal>
+      <p class="centro-text">{{ uiText().centroBody }}</p>
+      <a href="https://padlet.com/denisevalerialima/pesquisadores-as-do-capoeira-i3iuotc9u60jb600" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+        {{ uiText().centroTeam }}
+      </a>
+    </div>
+  </section>
+
+  <!-- Acompanhe a evolução da plataforma -->
+  <section id="contato" class="section section-contact">
+    <h2 class="section-title">{{ uiText().contactTitle }}</h2>
+    <p class="section-desc">
+      {{ uiText().contactSubtitle }}
+    </p>
+
+    <div class="contact-card" appScrollReveal>
+      <form class="contact-form" (submit)="onSubscribeSubmit($event)" novalidate>
+        <div class="form-row">
+          <label class="form-field">
+            <span class="form-label">{{ uiText().contactNameLabel }}</span>
+            <input
+              type="text"
+              class="form-input"
+              name="name"
+              autocomplete="name"
+              [value]="subscriberName()"
+              (input)="onSubscriberNameChange($event)"
+              required
+            />
+          </label>
+          <label class="form-field">
+            <span class="form-label">{{ uiText().contactEmailLabel }}</span>
+            <input
+              type="email"
+              class="form-input"
+              name="email"
+              autocomplete="email"
+              [value]="subscriberEmail()"
+              (input)="onSubscriberEmailChange($event)"
+              required
+            />
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="subscriberStatus() === 'loading'"
+          >
+            @if (subscriberStatus() === 'loading') {
+              <span>...</span>
+            } @else {
+              <span>{{ uiText().contactButton }}</span>
+            }
+          </button>
+
+          @if (subscriberStatus() === 'success') {
+            <p class="form-message form-message-success">
+              {{ uiText().contactSuccess }}
+            </p>
+          } @else if (subscriberStatus() === 'error' && subscriberError()) {
+            <p class="form-message form-message-error">
+              {{ subscriberError() }}
+            </p>
+          }
+        </div>
+      </form>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,30 @@
+[
+  {
+    "region": "Acre",
+    "year": 2021,
+    "carbon_per_hectare": 0.02,
+    "area_restored": 800,
+    "carbon": 20
+  },
+  {
+    "region": "Amazonas",
+    "year": 2023,
+    "carbon_per_hectare": 0.03,
+    "area_restored": 1400,
+    "carbon": 42
+  },
+  {
+    "region": "Par\u00e1",
+    "year": 2020,
+    "carbon_per_hectare": 0.03,
+    "area_restored": 1200,
+    "carbon": 35
+  },
+  {
+    "region": "Rond\u00f4nia",
+    "year": 2022,
+    "carbon_per_hectare": 0.03,
+    "area_restored": 950,
+    "carbon": 28
+  }
+]

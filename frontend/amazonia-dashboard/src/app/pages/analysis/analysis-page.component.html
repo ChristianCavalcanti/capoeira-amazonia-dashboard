@@ -1,0 +1,131 @@
+<div class="analysis-page">
+  <header class="page-header">
+    <h1>Análise científica</h1>
+    <p class="subtitle">Tendências de restauração e comparação de captura de carbono</p>
+    <a routerLink="/dashboard" class="back-link">← Voltar ao dashboard</a>
+  </header>
+
+  @if (loading()) {
+    <div class="loading">Carregando dados…</div>
+  } @else if (error()) {
+    <div class="error">
+      <p>{{ error() }}</p>
+    </div>
+  } @else {
+    <section class="section trend-section">
+      <h2>Tendência de restauração ao longo do tempo</h2>
+      <p class="section-desc">
+        Área restaurada e carbono sequestrado por região e ano. Use esta visão para acompanhar a evolução dos esforços de restauração no período monitorado.
+      </p>
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <canvas
+            baseChart
+            [data]="trendChartData()"
+            [options]="trendChartOptions"
+            type="line"
+          ></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section comparison-section">
+      <h2>Comparação de captura de carbono entre regiões</h2>
+      <p class="section-desc">
+        Área restaurada total e carbono total capturado por região (agregado pelos anos do conjunto de dados).
+      </p>
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <canvas
+            baseChart
+            [data]="regionComparisonData()"
+            [options]="comparisonChartOptions"
+            type="bar"
+          ></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section carbon-efficiency-section">
+      <h2>Eficiência de carbono por região</h2>
+      <p class="section-desc">
+        Média de carbono sequestrado por hectare (tCO₂e/ha) por região — indicador de eficiência da restauração.
+      </p>
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <canvas
+            baseChart
+            [data]="carbonEfficiencyChartData()"
+            [options]="carbonEfficiencyChartOptions"
+            type="bar"
+          ></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section method-section">
+      <h2>Contribuição por tipo de restauração</h2>
+      <p class="section-desc">
+        Percentual da área restaurada por método (regeneração natural, plantio de nativas, sistema agroflorestal).
+      </p>
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <canvas
+            baseChart
+            [data]="methodContributionChartData()"
+            [options]="methodContributionChartOptions"
+            type="bar"
+          ></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section growth-section">
+      <h2>Crescimento da restauração (análise científica)</h2>
+      <p class="section-desc">
+        Área restaurada e taxa de crescimento por região e ano, gerados pelo pipeline de análise.
+      </p>
+      <div class="chart-wrapper">
+        <div class="chart-container">
+          <canvas
+            baseChart
+            [data]="growthTrendChartData()"
+            [options]="growthTrendChartOptions"
+            type="line"
+          ></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section insights-section">
+      <h2>Insights científicos</h2>
+      @if (scientificInsights().length > 0) {
+        <p class="section-desc">
+          Conclusões geradas automaticamente a partir dos dados de restauração.
+        </p>
+        <ul class="insights-list">
+          @for (insight of scientificInsights(); track insight.id) {
+            <li>{{ insight.text }}</li>
+          }
+        </ul>
+      } @else {
+        <div class="insight-card">
+          <p class="insight-lead">
+            A restauração aumentou de forma relevante após 2021, com o Amazonas registrando a maior área restaurada em um único ano (1.400 ha em 2023). O Amazonas apresenta a maior taxa de captura de carbono por hectare no conjunto de dados.
+          </p>
+          <ul class="insights-list">
+            <li>Restauração cresceu de forma significativa após 2021; Amazonas lidera em área em um único ano (1.400 ha em 2023).</li>
+            <li>Amazonas apresenta a maior taxa de captura de carbono por hectare (42 tCO₂e para 1.400 ha em 2023).</li>
+            <li>Pará lidera em área restaurada no início da série (1.200 ha em 2020), indicando adoção precoce na região.</li>
+            <li>Rondônia e Acre mostram restauração e sequestro de carbono estáveis, contribuindo para a diversidade regional dos esforços de recuperação.</li>
+          </ul>
+        </div>
+      }
+    </section>
+
+    <footer class="analysis-footer">
+      <a routerLink="/dashboard" class="btn-link">Ver dashboard</a>
+      <a routerLink="/" class="btn-link">Início</a>
+    </footer>
+  }
+</div>

@@ -1,0 +1,26 @@
+[
+  {
+    "region": "Acre",
+    "total_area_restored": 800,
+    "total_carbon": 20,
+    "mean_carbon_per_hectare": 0.02
+  },
+  {
+    "region": "Amazonas",
+    "total_area_restored": 1400,
+    "total_carbon": 42,
+    "mean_carbon_per_hectare": 0.03
+  },
+  {
+    "region": "Par\u00e1",
+    "total_area_restored": 1200,
+    "total_carbon": 35,
+    "mean_carbon_per_hectare": 0.03
+  },
+  {
+    "region": "Rond\u00f4nia",
+    "total_area_restored": 950,
+    "total_carbon": 28,
+    "mean_carbon_per_hectare": 0.03
+  }
+]

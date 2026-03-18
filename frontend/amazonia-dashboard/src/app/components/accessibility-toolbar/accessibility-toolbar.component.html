@@ -1,0 +1,15 @@
+<div class="accessibility-toolbar">
+  @if (panelOpen()) {
+    <app-accessibility-panel (close)="closePanel()" />
+  }
+  <button
+    type="button"
+    class="accessibility-button"
+    [attr.aria-label]="a11yButtonLabel()"
+    [attr.aria-expanded]="panelOpen()"
+    (click)="togglePanel()"
+  >
+    <span aria-hidden="true">♿</span>
+    <span class="accessibility-button-text">{{ a11yButtonText() }}</span>
+  </button>
+</div>

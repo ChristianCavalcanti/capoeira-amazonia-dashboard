@@ -1,0 +1,30 @@
+<div class="data-table-card">
+  @if (loading()) {
+    <p class="data-table-loading">Carregando…</p>
+  } @else if (data().length === 0) {
+    <p class="data-table-empty">Nenhum registro para exibir.</p>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Região</th>
+            <th>Ano</th>
+            <th>Área restaurada (ha)</th>
+            <th>Carbono (tCO₂e)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of data(); track row.region + row.year) {
+            <tr>
+              <td>{{ row.region }}</td>
+              <td>{{ row.year }}</td>
+              <td>{{ row.area_restored }}</td>
+              <td>{{ row.carbon }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

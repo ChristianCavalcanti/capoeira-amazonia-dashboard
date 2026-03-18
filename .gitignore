@@ -1,0 +1,50 @@
+# Virtual environments
+venv/
+backend/venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+*.egg
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build / dist
+dist/
+frontend/amazonia-dashboard/dist/
+*.local
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# IDE / editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular
+.angular/
+tmp/
+out-tsc/
+
+# Optional: uncomment if you don't want to track data files (e.g. large CSVs)
+# data/*.csv

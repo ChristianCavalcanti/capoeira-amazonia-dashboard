@@ -1,0 +1,90 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 500px;
+}
+
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e8ece9;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border, #d8e2dc);
+}
+
+.map-container {
+  width: 100%;
+  height: 500px;
+  min-height: 500px;
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+
+.map-container.visible {
+  opacity: 1;
+}
+
+.map-legend {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: var(--bg-card, #fff);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted, #52796f);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border, #d8e2dc);
+}
+
+.map-legend-title {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text, #1b4332);
+}
+
+.map-legend-item {
+  display: block;
+}
+
+::ng-deep .leaflet-popup-content-wrapper {
+  background: var(--bg-card, #ffffff);
+  color: var(--text, #1b4332);
+  border: 1px solid var(--border, #d8e2dc);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .leaflet-popup-tip {
+  background: var(--bg-card, #ffffff);
+}
+
+::ng-deep .map-popup-wrapper .map-popup {
+  min-width: 200px;
+  font-size: 0.85rem;
+}
+
+::ng-deep .map-popup-wrapper .map-popup-title {
+  display: block;
+  font-size: 1rem;
+  color: var(--primary);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+::ng-deep .map-popup-wrapper .map-popup-row {
+  margin-bottom: 4px;
+  color: var(--text-muted);
+}
+
+::ng-deep .map-popup-wrapper .map-popup-row span {
+  display: inline-block;
+  min-width: 120px;
+  font-weight: 500;
+  color: var(--text);
+}

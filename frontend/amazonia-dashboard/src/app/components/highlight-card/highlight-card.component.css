@@ -1,0 +1,66 @@
+.highlight-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(30, 60, 50, 0.06);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.highlight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(30, 60, 50, 0.1);
+}
+
+.highlight-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.highlight-card-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.highlight-card-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.highlight-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.25rem 0;
+}
+
+.highlight-card-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.highlight-card-variation {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 0.35rem;
+}
+
+.highlight-card-variation.positive {
+  color: var(--secondary);
+}
+
+.highlight-card-variation.negative {
+  color: var(--earth);
+}

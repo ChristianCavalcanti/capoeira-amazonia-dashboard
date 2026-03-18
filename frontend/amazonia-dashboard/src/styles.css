@@ -1,0 +1,129 @@
+/* Identidade visual CAPOEIRA — natureza, madeira, institucional */
+:root {
+  /* Verde profundo (base institucional) */
+  --primary: #1e3c32;
+  --primary-light: #2d5246;
+  --primary-dark: #142a22;
+  --primary-bg: rgba(30, 60, 50, 0.08);
+  /* Verde musgo */
+  --secondary: #4a6b5a;
+  --secondary-muted: rgba(74, 107, 90, 0.15);
+  /* Marrom terra / marrom escuro */
+  --earth: #6b5344;
+  --earth-dark: #4a382e;
+  /* Bege natural */
+  --beige: #e8e0d5;
+  --beige-dark: #d4c9ba;
+  /* Acentos (discretos) */
+  --accent: #8b7355;
+  --accent-light: #a89078;
+  /* Superfícies */
+  --bg-page: #f5f2ed;
+  --bg-card: #fdfcfa;
+  --bg-section-alt: rgba(107, 83, 68, 0.04);
+  --text: #1f2e28;
+  --text-muted: #5c6d64;
+  --border: #d8d2c8;
+  --footer-bg: #1e3c32;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg-page);
+  color: var(--text);
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Transições suaves entre seções */
+section {
+  transition: background-color 0.25s ease;
+}
+
+/* Hover states em cards (reforço global) */
+[class*="-card"]:hover {
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+/* ——— WCAG 2.1 AA: Reduced motion ——— */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:host-context(.a11y-reduced-motion) *,
+.a11y-reduced-motion *,
+.a11y-reduced-motion *::before,
+.a11y-reduced-motion *::after {
+  animation: none !important;
+  transition-duration: 0.01ms !important;
+}
+
+body:has(app-root.a11y-reduced-motion) {
+  scroll-behavior: auto;
+}
+
+body:has(app-root.a11y-reduced-motion) * {
+  scroll-behavior: auto !important;
+}
+
+/* ——— Focus states (visible outlines) ——— */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Hero text readability over background (WCAG contrast) */
+.section-hero .hero-title,
+.section-hero .hero-subtitle,
+.section-hero .hero-tagline {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.a11y-line-spacing body,
+.a11y-line-spacing p,
+.a11y-line-spacing li {
+  line-height: 1.8 !important;
+}
+
+.a11y-letter-spacing body,
+.a11y-letter-spacing p,
+.a11y-letter-spacing li,
+.a11y-letter-spacing h1,
+.a11y-letter-spacing h2,
+.a11y-letter-spacing h3 {
+  letter-spacing: 0.08em !important;
+}
