@@ -420,10 +420,8 @@
   }
 
   .logo-sub {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    /* No mobile queremos apenas "CAPOEIRA" para não comprimir o cabeçalho. */
+    display: none;
     font-size: 0.56rem;
     line-height: 1.28;
     color: var(--text-muted);
