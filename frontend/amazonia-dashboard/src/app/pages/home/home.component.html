@@ -141,7 +141,8 @@
         </ul>
         <p class="map-legend-hint">{{ uiText().mapClickMarkerHint }}</p>
       </div>
-      <div class="map-section-card map-with-panel" appScrollReveal>
+      <!-- Sem appScrollReveal aqui: opacity:0 no ancestral quebra tiles do Leaflet em vários mobile/WebViews -->
+      <div class="map-section-card map-with-panel">
         <app-amazon-map
           [records]="mapMarkerRecords()"
           [selectedRegion]="selectedRegionForPanel()"
@@ -195,7 +196,7 @@
               baseChart
               [data]="carbonChartData()"
               [options]="carbonChartOptions()"
-              type="line"
+              [type]="labCarbonChartType()"
               (chartClick)="onChartClick($event, 'carbon')"
             ></canvas>
           </div>

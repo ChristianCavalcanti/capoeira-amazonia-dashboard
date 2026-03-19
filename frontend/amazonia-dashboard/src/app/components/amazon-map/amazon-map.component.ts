@@ -16,10 +16,15 @@ import {
 } from './region-coordinates';
 import type { Map, Marker } from 'leaflet';
 
-/** URL única recomendada pela OSM (evita problemas com subdomínios em alguns deploys/mobile). */
-const OSM_TILE = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const OSM_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+/**
+ * Carto + OSM: costuma ser mais estátil em mobile/Vercel do que tile.openstreetmap.org sozinho.
+ * OSM direto: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+ */
+const MAP_TILE_URL =
+  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+const MAP_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+  '&copy; <a href="https://carto.com/attributions">CARTO</a>';
 
 type RecordWithType = RestorationRecord & { restoration_type?: string };
 
@@ -37,6 +42,7 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private map: Map | null = null;
   private markers: Marker[] = [];
   private intersectionObserver: IntersectionObserver | null = null;
+  private resizeObserver: ResizeObserver | null = null;
   private readonly onWindowResize = (): void => {
     this.map?.invalidateSize();
   };
@@ -56,6 +62,8 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onWindowResize);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.intersectionObserver?.disconnect();
     this.intersectionObserver = null;
     this.clearMarkers();
@@ -67,32 +75,51 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
-    import('leaflet').then((L) => {
+    import('leaflet').then((mod) => {
+      // Em alguns bundles (ex: deploy), o `leaflet` pode vir via `default`.
+      // Garantimos que `L.map` e outros factories existam.
+      const L = (mod as any).default ?? mod;
+
       this.map = L.map(this.containerId, {
         center: AMAZON_CENTER,
         zoom: DEFAULT_ZOOM,
       });
 
-      L.tileLayer(OSM_TILE, {
-        attribution: OSM_ATTRIBUTION,
-        maxZoom: 19,
+      L.tileLayer(MAP_TILE_URL, {
+        attribution: MAP_ATTRIBUTION,
+        subdomains: 'abcd',
+        maxZoom: 20,
       }).addTo(this.map);
 
       this.updateMarkers();
       this.mapReady.set(true);
 
-      setTimeout(() => this.map?.invalidateSize(), 250);
-      setTimeout(() => this.map?.invalidateSize(), 600);
+      const bumpSize = (): void => {
+        this.map?.invalidateSize({ animate: false });
+      };
+
+      this.map?.whenReady(() => {
+        queueMicrotask(bumpSize);
+        requestAnimationFrame(bumpSize);
+      });
+
+      setTimeout(bumpSize, 250);
+      setTimeout(bumpSize, 600);
+      setTimeout(bumpSize, 1200);
 
       window.addEventListener('resize', this.onWindowResize);
+
+      this.resizeObserver?.disconnect();
+      this.resizeObserver = new ResizeObserver(() => bumpSize());
+      this.resizeObserver.observe(container);
 
       this.intersectionObserver?.disconnect();
       this.intersectionObserver = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
             if (e.isIntersecting) {
-              setTimeout(() => this.map?.invalidateSize(), 50);
-              setTimeout(() => this.map?.invalidateSize(), 300);
+              setTimeout(bumpSize, 50);
+              setTimeout(bumpSize, 300);
             }
           }
         },
@@ -122,11 +149,12 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (!this.map) return;
 
     import('leaflet').then((L) => {
-      this.doUpdateMarkers(L);
+      const leaflet = (L as any).default ?? L;
+      this.doUpdateMarkers(leaflet);
     });
   }
 
-  private doUpdateMarkers(L: typeof import('leaflet')): void {
+  private doUpdateMarkers(L: any): void {
     if (!this.map) return;
 
     this.clearMarkers();

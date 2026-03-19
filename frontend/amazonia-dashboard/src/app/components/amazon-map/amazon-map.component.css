@@ -9,7 +9,8 @@
   width: 100%;
   min-height: 500px;
   border-radius: 12px;
-  overflow: hidden;
+  /* overflow:hidden em ancestrais do Leaflet corta tiles; o clip fica no .leaflet-container */
+  overflow: visible;
   background: #e8ece9;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--border, #d8e2dc);

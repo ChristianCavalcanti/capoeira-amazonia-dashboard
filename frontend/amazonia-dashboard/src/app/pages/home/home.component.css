@@ -289,10 +289,29 @@
   cursor: pointer;
 }
 
+/* Laboratório: uma coluna + altura confortável no mobile (barras horizontais no TS) */
+@media (max-width: 768px) {
+  .section-visualizations .charts-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .section-visualizations .chart-container {
+    height: min(340px, 72vw);
+    min-height: 280px;
+  }
+
+  .section-visualizations .chart-card-body:has(canvas),
+  .section-visualizations app-chart-card .chart-card-body {
+    min-height: 280px;
+  }
+}
+
 /* Mapa */
 .map-section-card {
   border-radius: 12px;
-  overflow: hidden;
+  /* Não usar overflow:hidden aqui: quebra o pan/zoom dos tiles do Leaflet em mobile */
+  overflow: visible;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--border);
 }
@@ -711,14 +730,24 @@
     font-size: 0.8rem;
   }
 
-  /* Laboratório: 2 colunas, gráficos legíveis */
+  /* Laboratório: uma coluna (laboratório); outras seções podem manter 2 col se houver */
   .charts-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.65rem;
   }
 
+  .section-visualizations .charts-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .chart-container {
     height: 200px;
+  }
+
+  .section-visualizations .chart-container {
+    height: min(340px, 78vw);
+    min-height: 260px;
   }
 
   .lab-charts-hint {

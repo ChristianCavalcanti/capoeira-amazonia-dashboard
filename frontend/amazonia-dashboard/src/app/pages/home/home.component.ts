@@ -1,6 +1,7 @@
 import {
   Component,
   OnInit,
+  OnDestroy,
   inject,
   signal,
   computed,
@@ -8,7 +9,18 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration } from 'chart.js';
+import type { ChartConfiguration, ChartData } from 'chart.js';
+
+/** Valor numérico do tooltip (barras horizontais usam `x`, verticais/linha usam `y`). */
+function tooltipParsedValue(
+  ctx: { parsed?: { x?: number | null; y?: number | null } },
+  horizontal: boolean
+): number {
+  const p = ctx.parsed;
+  if (!p) return 0;
+  if (horizontal) return Number(p.x ?? p.y ?? 0);
+  return Number(p.y ?? p.x ?? 0);
+}
 import { RestorationService } from '../../services/restoration.service';
 import { FilterService } from '../../services/filter.service';
 import type { RestorationRecord } from '../../models/restoration.model';
@@ -150,13 +162,19 @@ const MOCK_CATALOG: CatalogItem[] = [
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   private readonly restorationService = inject(RestorationService);
   protected readonly filterService = inject(FilterService);
   private readonly languageService = inject(LanguageService);
   private readonly translation = inject(TranslationService);
   private readonly subscriberService = inject(SubscriberService);
   private readonly analysisService = inject(AnalysisService);
+
+  /**
+   * Telas estreitas (mobile): gráficos do laboratório em 1 coluna + barras horizontais.
+   */
+  protected readonly isLabCompactLayout = signal(false);
+  private mediaCleanup?: () => void;
 
   protected readonly data = signal<RestorationRecord[]>([]);
   /** Scientific insights from analysis API (dynamic when available). */
@@ -503,9 +521,8 @@ export class HomeComponent implements OnInit {
     };
   });
 
-  protected readonly carbonChartData = computed<
-    ChartConfiguration<'line'>['data']
-  >(() => {
+  /** Mesmos dados servem para linha (desktop) e barras horizontais (mobile). */
+  protected readonly carbonChartData = computed((): ChartData<'bar' | 'line'> => {
     const records = this.filteredData();
     if (!records.length) return { labels: [], datasets: [] };
     const sorted = [...records].sort((a, b) => a.year - b.year);
@@ -527,20 +544,32 @@ export class HomeComponent implements OnInit {
           pointHoverRadius: 6,
         },
       ],
-    };
+    } as ChartData<'bar' | 'line'>;
   });
 
   protected readonly areaChartOptions = computed<
     ChartConfiguration<'bar'>['options']
   >(() => {
+    const compact = this.isLabCompactLayout();
     const records = [...this.filteredData()].sort((a, b) => a.year - b.year);
+    const value = (ctx: { parsed?: { x?: number | null; y?: number | null } }) =>
+      tooltipParsedValue(ctx, compact);
     return {
       responsive: true,
       maintainAspectRatio: false,
+      indexAxis: compact ? 'y' : 'x',
       animation: { duration: 600 },
       plugins: {
-        legend: { display: true, position: 'top' },
-        title: { display: true, text: 'Área restaurada por ano' },
+        legend: {
+          display: true,
+          position: compact ? 'bottom' : 'top',
+          labels: { boxWidth: compact ? 10 : 40, font: { size: compact ? 10 : 12 } },
+        },
+        title: {
+          display: true,
+          text: 'Área restaurada por ano',
+          font: { size: compact ? 13 : 14 },
+        },
         tooltip: {
           callbacks: {
             title: (items) => {
@@ -548,7 +577,7 @@ export class HomeComponent implements OnInit {
               const r = records[i] as unknown as EnrichedRecord | undefined;
               return r ? `${r.region} — ${r.year}` : 'Detalhes';
             },
-            label: (ctx) => `Área restaurada: ${ctx.parsed.y} ha`,
+            label: (ctx) => `Área restaurada: ${value(ctx)} ha`,
             afterLabel: (ctx) => {
               const i = ctx.dataIndex ?? 0;
               const r = records[i] as unknown as EnrichedRecord | undefined;
@@ -567,24 +596,53 @@ export class HomeComponent implements OnInit {
           },
         },
       },
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'Hectares' } },
-        x: { title: { display: true, text: 'Ano' } },
-      },
+      scales: compact
+        ? {
+            x: {
+              beginAtZero: true,
+              title: { display: true, text: 'Hectares', font: { size: 11 } },
+              ticks: { font: { size: 10 } },
+            },
+            y: {
+              title: { display: true, text: 'Ano', font: { size: 11 } },
+              ticks: { font: { size: 10 } },
+            },
+          }
+        : {
+            y: { beginAtZero: true, title: { display: true, text: 'Hectares' } },
+            x: { title: { display: true, text: 'Ano' } },
+          },
     };
   });
 
+  /** No mobile usamos barras horizontais (mesmos dados) para leitura mais clara. */
+  protected readonly labCarbonChartType = computed<'line' | 'bar'>(() =>
+    this.isLabCompactLayout() ? 'bar' : 'line'
+  );
+
   protected readonly carbonChartOptions = computed<
-    ChartConfiguration<'line'>['options']
+    ChartConfiguration<'bar' | 'line'>['options']
   >(() => {
+    const compact = this.isLabCompactLayout();
     const records = [...this.filteredData()].sort((a, b) => a.year - b.year);
+    const carbonVal = (ctx: { parsed?: { x?: number | null; y?: number | null } }) =>
+      tooltipParsedValue(ctx, compact);
     return {
       responsive: true,
       maintainAspectRatio: false,
+      indexAxis: compact ? 'y' : ('x' as const),
       animation: { duration: 600 },
       plugins: {
-        legend: { display: true, position: 'top' },
-        title: { display: true, text: 'Sequestro de carbono por ano' },
+        legend: {
+          display: true,
+          position: compact ? 'bottom' : 'top',
+          labels: { boxWidth: compact ? 10 : 40, font: { size: compact ? 10 : 12 } },
+        },
+        title: {
+          display: true,
+          text: 'Sequestro de carbono por ano',
+          font: { size: compact ? 13 : 14 },
+        },
         tooltip: {
           callbacks: {
             title: (items) => {
@@ -592,7 +650,7 @@ export class HomeComponent implements OnInit {
               const r = records[i] as unknown as EnrichedRecord | undefined;
               return r ? `${r.region} — ${r.year}` : 'Detalhes';
             },
-            label: (ctx) => `Carbono: ${ctx.parsed.y} tCO₂e`,
+            label: (ctx) => `Carbono: ${carbonVal(ctx)} tCO₂e`,
             afterLabel: (ctx) => {
               const i = ctx.dataIndex ?? 0;
               const r = records[i] as unknown as EnrichedRecord | undefined;
@@ -608,10 +666,22 @@ export class HomeComponent implements OnInit {
           },
         },
       },
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'tCO₂e' } },
-        x: { title: { display: true, text: 'Ano' } },
-      },
+      scales: compact
+        ? {
+            x: {
+              beginAtZero: true,
+              title: { display: true, text: 'tCO₂e', font: { size: 11 } },
+              ticks: { font: { size: 10 } },
+            },
+            y: {
+              title: { display: true, text: 'Ano', font: { size: 11 } },
+              ticks: { font: { size: 10 } },
+            },
+          }
+        : {
+            y: { beginAtZero: true, title: { display: true, text: 'tCO₂e' } },
+            x: { title: { display: true, text: 'Ano' } },
+          },
     };
   });
 
@@ -642,24 +712,46 @@ export class HomeComponent implements OnInit {
 
   protected readonly carbonByRegionOptions = computed<
     ChartConfiguration<'bar'>['options']
-  >(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: { duration: 600 },
-    plugins: {
-      legend: { display: false },
-      title: { display: true, text: 'Estoque de carbono por região' },
-      tooltip: {
-        callbacks: {
-          label: (ctx) => `Total carbono: ${ctx.parsed.y} tCO₂e`,
+  >(() => {
+    const compact = this.isLabCompactLayout();
+    const val = (ctx: { parsed?: { x?: number | null; y?: number | null } }) =>
+      tooltipParsedValue(ctx, compact);
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: compact ? 'y' : 'x',
+      animation: { duration: 600 },
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Estoque de carbono por região',
+          font: { size: compact ? 13 : 14 },
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `Total carbono: ${val(ctx)} tCO₂e`,
+          },
         },
       },
-    },
-    scales: {
-      y: { beginAtZero: true, title: { display: true, text: 'tCO₂e' } },
-      x: { title: { display: true, text: 'Região' } },
-    },
-  }));
+      scales: compact
+        ? {
+            x: {
+              beginAtZero: true,
+              title: { display: true, text: 'tCO₂e', font: { size: 11 } },
+              ticks: { font: { size: 10 } },
+            },
+            y: {
+              title: { display: true, text: 'Região', font: { size: 11 } },
+              ticks: { font: { size: 10 }, autoSkip: false },
+            },
+          }
+        : {
+            y: { beginAtZero: true, title: { display: true, text: 'tCO₂e' } },
+            x: { title: { display: true, text: 'Região' } },
+          },
+    };
+  });
 
   /** Comparação por método de restauração */
   protected readonly restorationTypeChartData = computed<
@@ -689,24 +781,53 @@ export class HomeComponent implements OnInit {
 
   protected readonly restorationTypeChartOptions = computed<
     ChartConfiguration<'bar'>['options']
-  >(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: { duration: 600 },
-    plugins: {
-      legend: { display: false },
-      title: { display: true, text: 'Área por método de restauração' },
-      tooltip: {
-        callbacks: {
-          label: (ctx) => `Área: ${ctx.parsed.y} ha`,
+  >(() => {
+    const compact = this.isLabCompactLayout();
+    const val = (ctx: { parsed?: { x?: number | null; y?: number | null } }) =>
+      tooltipParsedValue(ctx, compact);
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: compact ? 'y' : 'x',
+      animation: { duration: 600 },
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Área por método de restauração',
+          font: { size: compact ? 12 : 14 },
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `Área: ${val(ctx)} ha`,
+          },
         },
       },
-    },
-    scales: {
-      y: { beginAtZero: true, title: { display: true, text: 'ha' } },
-      x: { title: { display: true, text: 'Método' } },
-    },
-  }));
+      scales: compact
+        ? {
+            x: {
+              beginAtZero: true,
+              title: { display: true, text: 'ha', font: { size: 11 } },
+              ticks: { font: { size: 10 } },
+            },
+            y: {
+              title: { display: true, text: 'Método', font: { size: 11 } },
+              ticks: {
+                font: { size: 9 },
+                autoSkip: false,
+                callback: (tickValue: string | number) => {
+                  const s = String(tickValue);
+                  return s.length > 22 ? s.slice(0, 20) + '…' : s;
+                },
+              },
+            },
+          }
+        : {
+            y: { beginAtZero: true, title: { display: true, text: 'ha' } },
+            x: { title: { display: true, text: 'Método' } },
+          },
+    };
+  });
 
   constructor() {
     effect(() => {
@@ -718,6 +839,14 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (typeof matchMedia !== 'undefined') {
+      const mq = matchMedia('(max-width: 768px)');
+      const apply = () => this.isLabCompactLayout.set(mq.matches);
+      apply();
+      mq.addEventListener('change', apply);
+      this.mediaCleanup = () => mq.removeEventListener('change', apply);
+    }
+
     this.restorationService.getRestorationData().subscribe({
       next: (records) => {
         this.data.set(records);
@@ -729,6 +858,10 @@ export class HomeComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.mediaCleanup?.();
   }
 
   onYearChange(event: Event): void {
