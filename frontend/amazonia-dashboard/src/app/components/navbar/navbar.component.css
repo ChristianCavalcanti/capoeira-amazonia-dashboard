@@ -447,6 +447,7 @@
 
   .logo-main {
     font-size: 1.05rem;
+    white-space: nowrap;
   }
 
   /* Ajustes extras para telas pequenas: evita sobreposição do toggle com os flags */
@@ -485,6 +486,77 @@
 
   .lang-flag .lang-flag-label {
     font-size: 0.78rem;
+  }
+}
+
+/* Faixa estreita (ex.: Galaxy S20, Xiaomi Mi 11i, Huawei P30 Pro em alguns webviews) */
+@media (max-width: 430px) {
+  .navbar-inner {
+    padding: 10px 10px;
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .logo-area {
+    gap: 8px;
+  }
+
+  .logo-mark,
+  .logo-mark img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .logo-text {
+    max-width: min(100%, calc(100vw - 170px));
+  }
+
+  .logo-main {
+    font-size: 0.9rem;
+    letter-spacing: -0.01em;
+  }
+
+  .header-right {
+    gap: 4px;
+  }
+
+  .theme-toggle {
+    width: 30px;
+    height: 30px;
+  }
+
+  .theme-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .lang-flags {
+    gap: 4px;
+  }
+
+  .lang-flag {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 2px;
+    gap: 0;
+    border-radius: 7px;
+  }
+
+  .lang-flag .lang-flag-svg {
+    width: 18px;
+    height: 12px;
+  }
+
+  .lang-flag .lang-flag-label {
+    display: none;
+  }
+
+  .menu-toggle {
+    padding: 0.3rem;
+  }
+
+  .menu-toggle-bar {
+    width: 18px;
   }
 }
 
