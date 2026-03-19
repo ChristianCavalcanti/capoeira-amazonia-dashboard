@@ -947,6 +947,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     const v = (event.target as HTMLSelectElement).value;
     this.catalogStatusFilter.set(v === '' ? null : v);
   }
+
+  onCatalogStatusPillClick(status: string): void {
+    const current = this.catalogStatusFilter();
+    this.catalogStatusFilter.set(current === status ? null : status);
+  }
   exploreCatalogData(): void {
     this.scrollToSection('laboratorio');
     const table = document.querySelector('#laboratorio app-data-table');

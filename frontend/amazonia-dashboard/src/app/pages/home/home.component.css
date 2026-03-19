@@ -523,6 +523,9 @@
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-weight: 500;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .catalog-pill-published {
@@ -553,6 +556,8 @@
   padding: 1.25rem;
   border: 1px solid var(--border);
   box-shadow: 0 2px 8px rgba(30, 60, 50, 0.04);
+  display: flex;
+  flex-direction: column;
 }
 
 .catalog-card-title {
@@ -572,7 +577,12 @@
   font-size: 0.9rem;
   color: var(--text-muted);
   line-height: 1.45;
-  margin: 0 0 1rem 0;
+  margin: 0;
+  flex: 1;
+}
+
+.catalog-card .btn-sm {
+  margin-top: auto;
 }
 
 /* Insights */
@@ -804,7 +814,8 @@
 
   .catalog-card-desc {
     font-size: 0.72rem;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0;
+    flex: 1;
     line-height: 1.35;
   }
 
@@ -812,6 +823,7 @@
     width: 100%;
     padding: 0.4rem 0.5rem;
     font-size: 0.72rem;
+    margin-top: auto;
   }
 
   .catalog-summary {

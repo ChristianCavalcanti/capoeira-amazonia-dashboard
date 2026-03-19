@@ -22,6 +22,8 @@
   min-height: 500px;
   opacity: 0;
   transition: opacity 0.35s ease-out;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .map-container.visible {
@@ -58,6 +60,12 @@
   border: 1px solid var(--border, #d8e2dc);
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Garante bordas consistentes mesmo quando os tiles/panning usam transform internos */
+::ng-deep .leaflet-container {
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 ::ng-deep .leaflet-popup-tip {

@@ -280,7 +280,17 @@
       <div class="catalog-status-pills">
         @for (status of catalogStatusOrder; track status) {
           @if (catalogStatusCounts()[status] > 0) {
-            <span class="catalog-pill" [class.catalog-pill-published]="status === 'Publicado'" [class.catalog-pill-review]="status === 'Em revisão'" [class.catalog-pill-processing]="status === 'Processando'">{{ catalogStatusCounts()[status] }} {{ catalogStatusLabel(status) }}</span>
+              <button
+                type="button"
+                class="catalog-pill"
+                [class.catalog-pill-published]="status === 'Publicado'"
+                [class.catalog-pill-review]="status === 'Em revisão'"
+                [class.catalog-pill-processing]="status === 'Processando'"
+                (click)="onCatalogStatusPillClick(status)"
+                [attr.aria-pressed]="catalogStatusFilter() === status"
+              >
+                {{ catalogStatusCounts()[status] }} {{ catalogStatusLabel(status) }}
+              </button>
           }
         }
       </div>
