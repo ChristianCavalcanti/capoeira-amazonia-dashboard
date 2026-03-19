@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type { RestorationRecord } from '../models/restoration.model';
 
-const API_URL = 'http://localhost:8000';
+// Render (production) backend URL
+const API_URL = 'https://capoeira-amazonia-dashboard.onrender.com';
 
 @Injectable({ providedIn: 'root' })
 export class RestorationService {

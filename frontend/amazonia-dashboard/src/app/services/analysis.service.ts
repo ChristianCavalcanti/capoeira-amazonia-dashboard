@@ -11,7 +11,8 @@ import type {
 } from '../models/analysis.model';
 import { LanguageService } from './language.service';
 
-const API_URL = 'http://localhost:8000';
+// Render (production) backend URL
+const API_URL = 'https://capoeira-amazonia-dashboard.onrender.com';
 
 @Injectable({ providedIn: 'root' })
 export class AnalysisService {

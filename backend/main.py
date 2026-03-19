@@ -22,7 +22,14 @@ def get_preferred_language(accept_language: str | None = Header(default=None, al
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200", "http://127.0.0.1:4200"],
+    allow_origins=[
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
+        # Optional: Vercel preview/prod domains (allows calls from the hosted frontend)
+        "https://capoeira-amazonia-dashboard.vercel.app",
+    ],
+    # Vercel app urls often look like: https://<project>-<hash>.vercel.app
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

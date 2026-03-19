@@ -2,7 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const API_URL = 'http://localhost:8000';
+// Render (production) backend URL
+const API_URL = 'https://capoeira-amazonia-dashboard.onrender.com';
 
 export interface SubscriberPayload {
   name: string;
