@@ -15,6 +15,7 @@ import {
   DEFAULT_ZOOM,
 } from './region-coordinates';
 import type { Map, Marker } from 'leaflet';
+import * as L from 'leaflet';
 
 /**
  * Carto + OSM: costuma ser mais estátil em mobile/Vercel do que tile.openstreetmap.org sozinho.
@@ -75,58 +76,52 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
-    import('leaflet').then((mod) => {
-      // Em alguns bundles (ex: deploy), o `leaflet` pode vir via `default`.
-      // Garantimos que `L.map` e outros factories existam.
-      const L = (mod as any).default ?? mod;
-
-      this.map = L.map(this.containerId, {
-        center: AMAZON_CENTER,
-        zoom: DEFAULT_ZOOM,
-      });
-
-      L.tileLayer(MAP_TILE_URL, {
-        attribution: MAP_ATTRIBUTION,
-        subdomains: 'abcd',
-        maxZoom: 20,
-      }).addTo(this.map);
-
-      this.updateMarkers();
-      this.mapReady.set(true);
-
-      const bumpSize = (): void => {
-        this.map?.invalidateSize({ animate: false });
-      };
-
-      this.map?.whenReady(() => {
-        queueMicrotask(bumpSize);
-        requestAnimationFrame(bumpSize);
-      });
-
-      setTimeout(bumpSize, 250);
-      setTimeout(bumpSize, 600);
-      setTimeout(bumpSize, 1200);
-
-      window.addEventListener('resize', this.onWindowResize);
-
-      this.resizeObserver?.disconnect();
-      this.resizeObserver = new ResizeObserver(() => bumpSize());
-      this.resizeObserver.observe(container);
-
-      this.intersectionObserver?.disconnect();
-      this.intersectionObserver = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              setTimeout(bumpSize, 50);
-              setTimeout(bumpSize, 300);
-            }
-          }
-        },
-        { threshold: 0.15 }
-      );
-      this.intersectionObserver.observe(container);
+    this.map = L.map(this.containerId, {
+      center: AMAZON_CENTER,
+      zoom: DEFAULT_ZOOM,
     });
+
+    L.tileLayer(MAP_TILE_URL, {
+      attribution: MAP_ATTRIBUTION,
+      subdomains: 'abcd',
+      maxZoom: 20,
+    }).addTo(this.map);
+
+    this.updateMarkers();
+    this.mapReady.set(true);
+
+    const bumpSize = (): void => {
+      this.map?.invalidateSize({ animate: false });
+    };
+
+    this.map?.whenReady(() => {
+      queueMicrotask(bumpSize);
+      requestAnimationFrame(bumpSize);
+    });
+
+    setTimeout(bumpSize, 250);
+    setTimeout(bumpSize, 600);
+    setTimeout(bumpSize, 1200);
+
+    window.addEventListener('resize', this.onWindowResize);
+
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = new ResizeObserver(() => bumpSize());
+    this.resizeObserver.observe(container);
+
+    this.intersectionObserver?.disconnect();
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setTimeout(bumpSize, 50);
+            setTimeout(bumpSize, 300);
+          }
+        }
+      },
+      { threshold: 0.15 }
+    );
+    this.intersectionObserver.observe(container);
   }
 
   private buildPopupContent(record: RecordWithType): string {
@@ -147,11 +142,7 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private updateMarkers(): void {
     if (!this.map) return;
-
-    import('leaflet').then((L) => {
-      const leaflet = (L as any).default ?? L;
-      this.doUpdateMarkers(leaflet);
-    });
+    this.doUpdateMarkers(L);
   }
 
   private doUpdateMarkers(L: any): void {
