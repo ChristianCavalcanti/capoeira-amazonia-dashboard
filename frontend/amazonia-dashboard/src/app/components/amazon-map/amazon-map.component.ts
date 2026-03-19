@@ -16,7 +16,8 @@ import {
 } from './region-coordinates';
 import type { Map, Marker } from 'leaflet';
 
-const OSM_TILE = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+/** URL única recomendada pela OSM (evita problemas com subdomínios em alguns deploys/mobile). */
+const OSM_TILE = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const OSM_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
@@ -35,6 +36,10 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private map: Map | null = null;
   private markers: Marker[] = [];
+  private intersectionObserver: IntersectionObserver | null = null;
+  private readonly onWindowResize = (): void => {
+    this.map?.invalidateSize();
+  };
   protected readonly containerId = 'amazon-map-' + Math.random().toString(36).slice(2, 9);
   protected readonly mapReady = signal(false);
 
@@ -50,6 +55,9 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    window.removeEventListener('resize', this.onWindowResize);
+    this.intersectionObserver?.disconnect();
+    this.intersectionObserver = null;
     this.clearMarkers();
     this.map?.remove();
     this.map = null;
@@ -74,6 +82,23 @@ export class AmazonMapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.mapReady.set(true);
 
       setTimeout(() => this.map?.invalidateSize(), 250);
+      setTimeout(() => this.map?.invalidateSize(), 600);
+
+      window.addEventListener('resize', this.onWindowResize);
+
+      this.intersectionObserver?.disconnect();
+      this.intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              setTimeout(() => this.map?.invalidateSize(), 50);
+              setTimeout(() => this.map?.invalidateSize(), 300);
+            }
+          }
+        },
+        { threshold: 0.15 }
+      );
+      this.intersectionObserver.observe(container);
     });
   }
 

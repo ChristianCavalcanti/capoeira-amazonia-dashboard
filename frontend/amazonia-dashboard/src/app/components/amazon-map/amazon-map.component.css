@@ -88,3 +88,18 @@
   font-weight: 500;
   color: var(--text);
 }
+
+@media (max-width: 768px) {
+  :host {
+    min-height: 280px;
+  }
+
+  .map-wrapper {
+    min-height: 280px;
+  }
+
+  .map-container {
+    height: 280px;
+    min-height: 280px;
+  }
+}

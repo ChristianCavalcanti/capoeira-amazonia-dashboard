@@ -17,6 +17,7 @@
   grid-template-columns: minmax(0, 320px) 1fr minmax(0, 200px);
   align-items: center;
   gap: 20px;
+  position: relative;
 }
 
 /* ——— ESQUERDA: Logo + identidade (largura fixa para não invadir o menu) ——— */
@@ -351,25 +352,32 @@
 
   .header-left {
     grid-area: left;
+    min-width: 0;
+    max-width: none;
   }
 
   .header-center {
     display: none;
   }
 
+  /* Painel do menu: canto direito, abaixo da barra (alinhado ao hamburger) */
   .header-center.nav-open {
     display: flex;
     position: absolute;
     top: 100%;
-    left: 0;
+    left: auto;
     right: 0;
+    width: min(300px, calc(100vw - 24px));
     flex-direction: column;
     align-items: stretch;
     background: var(--beige, #e8e0d5);
-    padding: 1rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--border);
-    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    gap: 0.35rem;
+    margin-top: 6px;
+    z-index: 1100;
     animation: navSlide 0.25s ease-out;
   }
 
@@ -381,9 +389,10 @@
 
   .header-center.nav-open .nav-link {
     justify-content: flex-start;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 0.85rem;
     text-align: left;
     border-radius: 8px;
+    font-size: 0.88rem;
   }
 
   .header-center.nav-open .nav-link::after {
@@ -393,7 +402,7 @@
   .header-center.nav-open .nav-icon-link,
   .header-center.nav-open .nav-link-external {
     justify-content: flex-start;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 0.85rem;
   }
 
   .header-right {
@@ -405,22 +414,34 @@
     grid-area: toggle;
   }
 
+  /* Subtítulo institucional visível no mobile, compacto */
+  .logo-text {
+    max-width: min(100%, calc(100vw - 200px));
+  }
+
   .logo-sub {
-    display: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.56rem;
+    line-height: 1.28;
+    color: var(--text-muted);
+    max-height: 3.9em;
   }
 
   .logo-mark {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 
   .logo-mark img {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 
   .logo-main {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 }
 

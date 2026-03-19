@@ -62,6 +62,13 @@ export class NavbarComponent {
     this.menuOpen = !this.menuOpen;
   }
 
+  /** Fecha o menu ao rolar a página (mobile UX). */
+  @HostListener('window:scroll')
+  protected onWindowScroll(): void {
+    if (!this.menuOpen) return;
+    this.menuOpen = false;
+  }
+
   protected setLanguage(lang: 'pt' | 'en'): void {
     this.languageService.setLanguage(lang);
     this.menuOpen = false;

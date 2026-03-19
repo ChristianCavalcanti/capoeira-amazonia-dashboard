@@ -64,3 +64,42 @@
 .highlight-card-variation.negative {
   color: var(--earth);
 }
+
+@media (max-width: 600px) {
+  .highlight-card {
+    padding: 0.85rem 0.7rem;
+    border-radius: 12px;
+  }
+
+  .highlight-card-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .highlight-card-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .highlight-card-value {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .highlight-card-title {
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  .highlight-card-subtitle {
+    font-size: 0.62rem;
+    line-height: 1.3;
+  }
+
+  .highlight-card-variation {
+    font-size: 0.65rem;
+    margin-left: 0.2rem;
+  }
+}
