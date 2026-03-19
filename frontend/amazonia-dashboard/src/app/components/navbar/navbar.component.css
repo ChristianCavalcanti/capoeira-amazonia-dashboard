@@ -412,6 +412,8 @@
   .menu-toggle {
     display: flex;
     grid-area: toggle;
+    position: relative;
+    z-index: 2;
   }
 
   /* Subtítulo institucional visível no mobile, compacto */
@@ -440,6 +442,44 @@
 
   .logo-main {
     font-size: 1.05rem;
+  }
+
+  /* Ajustes extras para telas pequenas: evita sobreposição do toggle com os flags */
+  .header-right {
+    position: relative;
+    z-index: 1;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+  }
+
+  .theme-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .lang-flags {
+    gap: 6px;
+  }
+
+  .lang-flag {
+    min-width: 36px;
+    height: 34px;
+    padding: 0 4px;
+  }
+
+  .lang-flag .lang-flag-svg {
+    width: 20px;
+    height: 14px;
+  }
+
+  .lang-flag .lang-flag-label {
+    font-size: 0.78rem;
   }
 }
 
